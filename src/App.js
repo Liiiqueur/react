@@ -1,5 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
+import { useState } from 'react';
 
 function Header(props) {//컨포넌트
   console.log('props', props, props.title);
@@ -16,7 +17,7 @@ function Nav(props) {
     let t = props.topics[i];
     lis.push(<li key = {t.id}><a id={t.id} href={'/read/'+t.id} onClick={event=>{
       event.preventDefault();
-      props.onChangeMode(event.target.id);
+      props.onChangeMode(Number(event.target.id));
     }}>{t.title}</a></li>)
   }
   return <nav>
@@ -32,20 +33,40 @@ function Article(props) {
   </article>
 }
 function App() {
+  //const _mode = useState('WELCOME');
+  //const mode = _mode[0];
+  //const setMode = _mode[1];
+  const [mode, setMode] = useState('WELCOME');
+  const [id, setId] = useState(null);
   const topics = [
-    {id:1, title:'html', body:'html is...'},
-    {id:2, title:'css', body:'css is...'},
-    {id:3, title:'js', body:'js is...'}
+    {id:1, title:'가천대학교 스마트보안전공', body:'제3대 학생회 부학생회장'},
+    {id:2, title:'KISIA', body:'팀 프로젝트 우수상 및 교육 과정 수료'},
+    {id:3, title:'화이트햇 스쿨', body:'수료'}
   ]
+  let content = null;
+  if(mode === 'WELCOME') {
+    content = <Article title="Welcome" body="WelCome, My 포트폴리오"></Article>
+  } else if(mode === 'READ') {
+    let title, body = null;
+    for(let i = 0; i < topics.length; i++) {
+      console.log(topics[i].id, id);
+      if(topics[i].id === id) {
+        title = topics[i].title;
+        body = topics[i].body;
+      }
+    }
+      content = <Article title={title} body={body}></Article>
+  }
   return (
     <div>
-        <Header title="WEB" onChangeMode={()=>{
-          alert('Header');
+        <Header title="Liqueur" onChangeMode={()=>{
+          setMode('WELCOME');
           }}></Header>
-        <Nav topics={topics} onChangeMode={(id)=>{
-          alert(id);
+        <Nav topics={topics} onChangeMode={(_id)=>{
+          setMode('READ');
+          setId(_id);
         }}></Nav>
-        <Article title="Welcome" body="Hello, WEB"></Article>
+        {content}
     </div>
   );
 }
